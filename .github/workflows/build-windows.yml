@@ -1,0 +1,51 @@
+name: Windows EXEを作成
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-2025
+    timeout-minutes: 20
+
+    defaults:
+      run:
+        shell: pwsh
+
+    steps:
+      - name: ソースを取得
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Goを準備
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.27.3'
+          cache: false
+
+      - name: テスト・ビルド・配布ZIP作成
+        run: |
+          ./package-native.ps1 -Go go -OutRoot ./release-output
+
+      - name: SHA256を記録
+        run: |
+          Get-ChildItem ./release-output/*.zip |
+            ForEach-Object {
+              $hash = (Get-FileHash $_.FullName -Algorithm SHA256).Hash
+              "$hash  $($_.Name)"
+            } |
+            Set-Content ./release-output/SHA256SUMS.txt -Encoding utf8
+
+      - name: 完成したZIPを保存
+        uses: actions/upload-artifact@v4
+        with:
+          name: MABI-DPS-JP-Windows
+          path: |
+            release-output/*.zip
+            release-output/SHA256SUMS.txt
+          if-no-files-found: error
+          retention-days: 14
