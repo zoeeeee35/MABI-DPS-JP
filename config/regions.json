@@ -1,0 +1,42 @@
+{
+  "jp": {
+    "name": "日本版（実受信の解釈は未検証）",
+    "protocol": "未確認",
+    "verified": false,
+    "skills": {},
+    "classes": {},
+    "enemies": {}
+  },
+  "tw": {
+    "name": "台湾地域（オフライン分析のみ）",
+    "protocol": "MOGUGIのPC版仕様をモバイルへ適用しない",
+    "verified": false,
+    "skills": {},
+    "classes": {},
+    "enemies": {}
+  },
+  "synthetic": {
+    "skills": {
+      "sample:slash": "斬撃（サンプル）",
+      "sample:burst": "連撃（サンプル）",
+      "sample:magic": "魔法（サンプル）",
+      "sample:bow": "射撃（サンプル）"
+    },
+    "classes": {
+      "sample:warrior": "戦士（サンプル）",
+      "sample:mage": "魔法使い（サンプル）",
+      "sample:archer": "弓使い（サンプル）"
+    },
+    "enemies": {
+      "sample:dummy": "訓練対象（サンプル）"
+    }
+  },
+  "kr": {
+    "enemies": {},
+    "skills": {},
+    "protocol": "kr-legacy-2025",
+    "classes": {},
+    "name": "韓国版（公開旧形式・実測未検証）",
+    "verified": false
+  }
+}

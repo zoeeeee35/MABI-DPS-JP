@@ -1,0 +1,28 @@
+# User settings, battle history, diagnostics and packet recordings
+/data/
+/captures/
+/local-analysis/
+/dist-native/
+/traffic-measurements.json
+*.pcap
+*.pcapng
+*.etl
+*.log
+*.dmp
+
+# Generated builds and dependencies
+*.exe
+*.dll
+*.sys
+*.syso
+*.zip
+node_modules/
+
+# Local credentials and editor state
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.vscode/
+.idea/

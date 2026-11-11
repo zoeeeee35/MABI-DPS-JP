@@ -1,0 +1,162 @@
+{
+  "version": 1,
+  "region": "jp",
+  "source": "synthetic",
+  "players": [
+    {
+      "name": "アオイ（サンプル）",
+      "classId": "sample:warrior",
+      "party": true,
+      "id": "sample:a"
+    },
+    {
+      "name": "ユイ（サンプル）",
+      "classId": "sample:mage",
+      "party": true,
+      "id": "sample:b"
+    },
+    {
+      "name": "レン（サンプル）",
+      "classId": "sample:archer",
+      "party": true,
+      "id": "sample:c"
+    }
+  ],
+  "events": [
+    {
+      "critical": false,
+      "playerId": "sample:a",
+      "atMs": 0,
+      "type": "damage",
+      "id": "native-0",
+      "targetId": "sample:dummy",
+      "skillId": "sample:slash",
+      "damage": 1000
+    },
+    {
+      "critical": true,
+      "playerId": "sample:b",
+      "atMs": 1000,
+      "type": "damage",
+      "id": "native-1",
+      "targetId": "sample:dummy",
+      "skillId": "sample:magic",
+      "damage": 500
+    },
+    {
+      "critical": false,
+      "playerId": "sample:c",
+      "atMs": 2000,
+      "type": "damage",
+      "id": "native-2",
+      "targetId": "sample:dummy",
+      "skillId": "sample:bow",
+      "damage": 800
+    },
+    {
+      "critical": true,
+      "playerId": "sample:a",
+      "atMs": 3000,
+      "type": "damage",
+      "id": "native-3",
+      "targetId": "sample:dummy",
+      "skillId": "sample:burst",
+      "damage": 1500
+    },
+    {
+      "critical": false,
+      "playerId": "sample:b",
+      "atMs": 4000,
+      "type": "damage",
+      "id": "native-4",
+      "targetId": "sample:dummy",
+      "skillId": "sample:magic",
+      "damage": 5000
+    },
+    {
+      "critical": true,
+      "playerId": "sample:c",
+      "atMs": 5000,
+      "type": "damage",
+      "id": "native-5",
+      "targetId": "sample:dummy",
+      "skillId": "sample:bow",
+      "damage": 2500
+    },
+    {
+      "critical": false,
+      "playerId": "sample:a",
+      "atMs": 6000,
+      "type": "damage",
+      "id": "native-6",
+      "targetId": "sample:dummy",
+      "skillId": "sample:burst",
+      "damage": 4000
+    },
+    {
+      "critical": true,
+      "playerId": "sample:b",
+      "atMs": 8000,
+      "type": "damage",
+      "id": "native-7",
+      "targetId": "sample:dummy",
+      "skillId": "sample:magic",
+      "damage": 2000
+    },
+    {
+      "critical": false,
+      "playerId": "sample:c",
+      "atMs": 9000,
+      "type": "damage",
+      "id": "native-8",
+      "targetId": "sample:dummy",
+      "skillId": "sample:bow",
+      "damage": 2000
+    },
+    {
+      "critical": true,
+      "playerId": "sample:a",
+      "atMs": 10000,
+      "type": "damage",
+      "id": "native-9",
+      "targetId": "sample:dummy",
+      "skillId": "sample:slash",
+      "damage": 3000
+    },
+    {
+      "id": "end-native",
+      "atMs": 12000,
+      "type": "end"
+    },
+    {
+      "critical": true,
+      "playerId": "sample:c",
+      "atMs": 20000,
+      "type": "damage",
+      "id": "native-10",
+      "targetId": "sample:dummy",
+      "skillId": "sample:bow",
+      "damage": 3000
+    },
+    {
+      "critical": false,
+      "playerId": "sample:a",
+      "atMs": 22000,
+      "type": "damage",
+      "id": "native-11",
+      "targetId": "sample:dummy",
+      "skillId": "sample:slash",
+      "damage": 2500
+    },
+    {
+      "critical": false,
+      "playerId": "sample:b",
+      "atMs": 24000,
+      "type": "damage",
+      "id": "native-12",
+      "targetId": "sample:dummy",
+      "skillId": "sample:magic",
+      "damage": 4000
+    }
+  ]
+}

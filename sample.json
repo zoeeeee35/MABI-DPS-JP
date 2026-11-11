@@ -1,0 +1,166 @@
+{
+  "version": 1,
+  "region": "jp",
+  "source": "synthetic",
+  "players": [
+    {
+      "classId": "sample:warrior",
+      "name": "サンプル・アオイ",
+      "id": "sample:a",
+      "party": true
+    },
+    {
+      "classId": "sample:mage",
+      "name": "サンプル・ユイ",
+      "id": "sample:b",
+      "party": true
+    }
+  ],
+  "events": [
+    {
+      "damage": 1000,
+      "type": "damage",
+      "playerId": "sample:a",
+      "id": "hit-0",
+      "skillId": "sample:slash",
+      "targetId": "sample:dummy",
+      "atMs": 0,
+      "critical": true
+    },
+    {
+      "damage": 500,
+      "type": "damage",
+      "playerId": "sample:b",
+      "id": "hit-1",
+      "skillId": "sample:magic",
+      "targetId": "sample:dummy",
+      "atMs": 1000,
+      "critical": false
+    },
+    {
+      "damage": 1000,
+      "type": "damage",
+      "playerId": "sample:a",
+      "id": "hit-2",
+      "skillId": "sample:burst",
+      "targetId": "sample:dummy",
+      "atMs": 2000,
+      "critical": false
+    },
+    {
+      "damage": 500,
+      "type": "damage",
+      "playerId": "sample:b",
+      "id": "hit-3",
+      "skillId": "sample:magic",
+      "targetId": "sample:dummy",
+      "atMs": 3000,
+      "critical": true
+    },
+    {
+      "damage": 1000,
+      "type": "damage",
+      "playerId": "sample:a",
+      "id": "hit-4",
+      "skillId": "sample:slash",
+      "targetId": "sample:dummy",
+      "atMs": 4000,
+      "critical": false
+    },
+    {
+      "damage": 500,
+      "type": "damage",
+      "playerId": "sample:b",
+      "id": "hit-5",
+      "skillId": "sample:magic",
+      "targetId": "sample:dummy",
+      "atMs": 5000,
+      "critical": false
+    },
+    {
+      "damage": 1000,
+      "type": "damage",
+      "playerId": "sample:a",
+      "id": "hit-6",
+      "skillId": "sample:burst",
+      "targetId": "sample:dummy",
+      "atMs": 6000,
+      "critical": true
+    },
+    {
+      "damage": 500,
+      "type": "damage",
+      "playerId": "sample:b",
+      "id": "hit-7",
+      "skillId": "sample:magic",
+      "targetId": "sample:dummy",
+      "atMs": 7000,
+      "critical": false
+    },
+    {
+      "damage": 1000,
+      "type": "damage",
+      "playerId": "sample:a",
+      "id": "hit-8",
+      "skillId": "sample:slash",
+      "targetId": "sample:dummy",
+      "atMs": 8000,
+      "critical": false
+    },
+    {
+      "damage": 500,
+      "type": "damage",
+      "playerId": "sample:b",
+      "id": "hit-9",
+      "skillId": "sample:magic",
+      "targetId": "sample:dummy",
+      "atMs": 9000,
+      "critical": true
+    },
+    {
+      "damage": 1000,
+      "type": "damage",
+      "playerId": "sample:a",
+      "id": "hit-10",
+      "skillId": "sample:burst",
+      "targetId": "sample:dummy",
+      "atMs": 10000,
+      "critical": false
+    },
+    {
+      "damage": 500,
+      "type": "damage",
+      "playerId": "sample:b",
+      "id": "hit-11",
+      "skillId": "sample:magic",
+      "targetId": "sample:dummy",
+      "atMs": 11000,
+      "critical": false
+    },
+    {
+      "type": "end",
+      "id": "end-1",
+      "atMs": 12000
+    },
+    {
+      "damage": 1200,
+      "type": "damage",
+      "playerId": "sample:b",
+      "id": "hit-12",
+      "skillId": "sample:magic",
+      "targetId": "sample:dummy",
+      "atMs": 20000,
+      "critical": true
+    },
+    {
+      "damage": 800,
+      "type": "damage",
+      "playerId": "sample:a",
+      "id": "hit-13",
+      "skillId": "sample:slash",
+      "targetId": "sample:dummy",
+      "atMs": 22000,
+      "critical": false
+    }
+  ]
+}

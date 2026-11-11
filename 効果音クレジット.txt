@@ -1,0 +1,15 @@
+MABI DPS JP - 通知効果音クレジット
+
+効果音：OtoLogic（https://otologic.jp/）
+使用素材：ひらめき02-1(高) / Inspiration02-1(High).mp3
+用途：召喚の結界の通知音
+素材ページ：https://otologic.jp/free/se/inspiration01.html
+利用規約：https://otologic.jp/free/license.html
+ライセンス：Creative Commons Attribution 4.0 International (CC BY 4.0)
+https://creativecommons.org/licenses/by/4.0/
+
+提供されたMP3を無加工で同梱しています。アプリ内の音量調整は再生時のみ行います。
+本素材の権利はOtoLogicに帰属し、アプリのソースコード用ライセンスとは別です。
+再配布する際も、このクレジットとライセンス・素材へのリンクを保持してください。
+OtoLogicによる本アプリの推奨・公認を意味するものではありません。
+確認日：2026-10-27

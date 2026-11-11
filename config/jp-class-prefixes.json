@@ -1,0 +1,21 @@
+{
+  "SwordMaster": "剣術士",
+  "Arbalist": "クロスボウ使い",
+  "FireMage": "火炎術師",
+  "IceMage": "氷結術師",
+  "Fighter": "格闘家",
+  "LongBowMan": "長弓使い",
+  "Healer": "ヒーラー",
+  "ExpertWarrior": "戦士",
+  "GreatSwordWarrior": "大剣戦士",
+  "HighThief": "盗賊",
+  "DualBlades": "双剣士",
+  "HighArcher": "弓使い",
+  "HighMage": "魔法使い",
+  "Priest": "司祭",
+  "Bard": "吟遊詩人",
+  "Monk": "修道士",
+  "Dancer": "踊り子",
+  "BattleMusician": "楽士",
+  "NoviceWarrior": "戦士"
+}
