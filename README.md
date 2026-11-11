@@ -112,6 +112,4 @@ npm run build
 
 アプリケーションコードは [MIT License](LICENSE) です。由来コード・依存ライブラリ・フォント・効果音の条件は [THIRD-PARTY.md](THIRD-PARTY.md) に記載しています。
 
-日本語辞書・翻訳データの再配布条件と、提供されたアプリアイコンの公開許諾は、確認事項として残っています。
-
 コードと配布物の検査結果・確認範囲は [SECURITY-REVIEW.md](SECURITY-REVIEW.md) を参照してください。
