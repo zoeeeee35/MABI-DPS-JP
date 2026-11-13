@@ -28,3 +28,9 @@ node_modules/
 .vscode/
 .idea/
 
+
+/release-output/
+/app/dist-native/
+/app/data/
+/app/captures/
+/app/.updates/
