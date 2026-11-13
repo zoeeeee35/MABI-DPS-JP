@@ -6,6 +6,21 @@
 
 [リリース一覧](https://github.com/zoeeeee35/MABI-DPS-JP/releases)からもダウンロードできます。
 
+<!-- screenshots:start - preserve this section in future source exports -->
+## 画面イメージ
+
+### メイン画面
+<img width="1174" height="953" alt="image" src="https://github.com/user-attachments/assets/fc2a8c77-721b-40bc-9ca8-aff241969749" />
+
+
+### 通常オーバーレイ
+<img width="361" height="619" alt="image" src="https://github.com/user-attachments/assets/e718eb14-ba0f-400a-a3af-e4bb2efb3048" />
+
+
+### ゲーム内ミニ表示
+<img width="263" height="506" alt="image" src="https://github.com/user-attachments/assets/1e5847b0-2418-4ddd-bdeb-7261a855ab01" />
+<!-- screenshots:end -->
+
 ## 動作環境
 
 - Windows 10 / 11、64ビット版
@@ -97,14 +112,6 @@ go vet -tags native ./...
 go build -tags "native capturedev" -o MabiDPS-JP-dev.exe .
 ~~~
 
-`web` フォルダーは旧オフラインWeb表示のソースです。Web側を変更する場合は、このフォルダーで次を実行します。
-
-~~~powershell
-npm ci
-npm test
-npm run build
-~~~
-
 利用者の設定・履歴・通信記録・ログをリポジトリに追加しないでください。除外項目は `.gitignore` に記載しています。
 
 </details>
@@ -117,38 +124,11 @@ npm run build
 
 コードと配布物の検査結果・確認範囲は [SECURITY-REVIEW.md](docs/SECURITY-REVIEW.md) を参照してください。
 
-## アプリの更新
+## 開発ドキュメント
 
-v1.0.1以降は、起動時にGitHubの最新版を1日1回確認します。新版がある場合は「設定 → その他」に案内を表示します。「更新する」を押して確認した場合だけZIPを取得し、キャプチャを停止してファイルを入れ替え、再起動します。手動確認と自動確認の無効化も同じ画面で行えます。
+- [構成・ビルド・テスト](docs/DEVELOPMENT.md)
+- [自動更新の仕様](docs/UPDATES.md)
+- [変更履歴](CHANGELOG.md)
 
-既存のdataフォルダー、翻訳CSV、config、soundsは保持します。CSVの初期データも既存ファイルがある場合は更新しないため、新版で追加された翻訳は必要に応じて手動で取り込んでください。未保存の計測中の結果は更新前に保存し、時間指定計測は終了してください。
-
-更新には、このリポジトリの公開・正式ReleaseとGitHubが返すSHA-256が必要です。タグはv1.2.3形式、ZIPはMABI-DPS-JP-v1.2.3-Windows.zip形式にしてください。ActionsからダウンロードしたMABI-DPS-JP-Windows.zip（内部にそのバージョンのZIPとSHA256SUMS.txtのみを含む形式）にも対応します。ZIP内のVERSIONとrelease-manifest.jsonも同じバージョンにする必要があります。
-
-ZIPは64MiB以内、展開後は192MiB以内に制限します。更新中のファイルと旧ファイルのバックアップは、EXE横の .updates/pending-* に残ります。書き込みエラー時は復元を試みますが、電源断などによる中断からの自動復旧は保証しません。起動できない場合は、元の配布ZIPを別フォルダーに展開し、dataを引き継いでください。
-
-HTTPS・取得元制限・SHA-256照合は行いますが、コード署名や独立した鍵による更新署名は未導入です。GitHubアカウントやリリース自体が侵害された場合を防ぐものではありません。実通信の更新適用は、公開された新しいReleaseで別途確認する必要があります。
-## キャプチャの自動開始（v1.0.2以降）
-
-起動時は自動開始ON・自分IDの自動推定ONです。ゲームプロセスが接続しているネットワークアダプターを検出してキャプチャを開始します。ゲームを後から起動しても約5秒間隔で接続を確認します。複数候補がある場合は以前選んだアダプターを優先し、判別できなければ手動選択を待ちます。Npcapは別途必要です。
-
-キャプチャ停止を手動で押した場合、その起動中は勝手に再開しません。再開はキャプチャ開始、または自動開始を一度OFFにしてONにしてください。設定 → 計測から自動開始と自分ID自動推定を変更でき、data/capture-start.jsonへ保存します。サンプル再生中と自動GUIテスト中は自動開始しません。
-
-自分IDは、既存の職業・スキル・ダメージ通知を使った推定です。ローカルプレイヤーIDを通信から確定したものではなく、混雑した場所や同行NPCがいる場面では他の対象を選ぶ可能性があります。設定 → 詳細 → 自分IDを修正で確認・修正できます。自動推定前のダメージも同じIDの記録から遡って集計します。
-## 旧翻訳CSVの廃止（v1.0.6以降）
-
-スキル表示名のCSV設定枠を削除し、従来のスキル翻訳.csv・効果ID翻訳.csvの起動時読み込みと同梱を終了しました。旧ファイルが利用者のフォルダーに残っていても読み込みません。ID辞書の識別子翻訳.csvは引き続き利用できます。v1.0.9以降の配布ZIPには識別子翻訳.csvを必ず同梱します。辞書データの再配布条件はTHIRD-PARTY.mdを参照してください。
-
-ID辞書の名称はスキル表・円グラフ・通常オーバーレイで共通です。同じログ・キャラクターでスキル使用通知の識別子、または一意に対応したダメージ通知から名称を確認できた場合は、使用通知だけの行にも反映します。異なる名前が観測された内部名は勝手に一つへ確定せず、既存表記へ戻します。分類と集計は変更しません。
-
-
-
-## ソースの配置
-
-- `app/`：Goソース・テスト・辞書・素材・依存ライブラリ
-- `docs/`：使い方・開発用文書
-- `.github/`：GitHub Actions
-
-ビルドはルートで `.\build-native.ps1 -Go go`、ZIP作成は `.\package-native.ps1 -Go go` を実行します。Goコマンドを直接使う場合は先に `cd app` を実行してください。旧Web表示は `app/web/` にあります。
-
+ソースとテストは `app/`、利用・開発文書は `docs/` に配置しています。
 
