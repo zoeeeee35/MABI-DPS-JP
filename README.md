@@ -2,7 +2,8 @@
 
 日本版マビノギモバイルで、自分のDPSやスキル別ダメージを確認できるWindows用ツールです。ゲーム画面上に小さく表示する「ミニ表示」と、詳しい数値を表示する「通常オーバーレイ」を切り替えられます。
 
-[Windows版 v1.0.9をダウンロード](https://github.com/zoeeeee35/MABI-DPS-JP/releases/tag/v1.0.9)
+[Windows版をダウンロード](https://github.com/zoeeeee35/MABI-DPS-JP/releases/tag/v1.0.9)
+
 [リリース一覧](https://github.com/zoeeeee35/MABI-DPS-JP/releases)からもダウンロードできます。
 
 <!-- screenshots:start - preserve this section in future source exports -->
