@@ -18,7 +18,6 @@
 *.zip
 node_modules/
 .updates/
-識別子翻訳.csv
 
 # Local credentials and editor state
 .env
@@ -28,3 +27,4 @@ node_modules/
 *.key
 .vscode/
 .idea/
+

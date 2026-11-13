@@ -33,15 +33,6 @@ func loadSkillDisplayNames() {
 			}
 		}
 	}
-	if exe, e := os.Executable(); e == nil {
-		aliases, status := readSkillTranslationCSV(filepath.Dir(exe))
-		skillTranslationCSVStatus = status
-		if status.Error == "" {
-			for code, label := range aliases {
-				skillNamesJA.KnownAliases[code] = label
-			}
-		}
-	}
 }
 func japaneseSkillName(internal string) string {
 	skillNamesOnce.Do(loadSkillDisplayNames)

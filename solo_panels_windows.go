@@ -44,9 +44,11 @@ func nativeSoloRows(b *Battle) []SkillDamageRow {
 	effectNamesOnce.Do(loadEffectNames)
 	usageLog := targetSkillUsageLog(soloLog(), currentTargetFilter())
 	rows := classifyUnknownEffectRows(linkedSkillRows(b, usageLog, who.ID), soloLog(), effectNames)
+	aliases := identifierSkillAliases(soloLog(), who.ID, identifierNames)
 	for i := range rows {
-		rows[i].Name = skillRowDisplayName(rows[i])
+		rows[i].Name = skillRowDisplayNameWithAliases(rows[i], aliases)
 	}
+	rows = mergeSkillDisplayRows(rows, usageLog, who.ID, b)
 	sortLinkedSkills(rows, skillSortColumn, skillSortDescending)
 	return append([]SkillDamageRow{allSkillDamageRow(b, usageLog, who.ID)}, expandUnknownEffectRows(rows, unknownEffectsExpanded)...)
 }

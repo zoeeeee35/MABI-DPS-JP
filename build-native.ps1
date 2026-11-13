@@ -6,6 +6,7 @@ param(
 $ErrorActionPreference = "Stop"
 Push-Location $PSScriptRoot
 try {
+ if (-not (Test-Path -LiteralPath "識別子翻訳.csv" -PathType Leaf)) { throw "必須の識別子翻訳.csvがありません" }
  & (Join-Path $PSScriptRoot "build-icon.ps1")
  & $Go test -tags native ./...
  if ($LASTEXITCODE -ne 0) { throw "自動テストが失敗しました" }
@@ -16,12 +17,9 @@ try {
  $exePath = Join-Path $OutDir "MabiDPS-JP.exe"
  $version = ([IO.File]::ReadAllText((Join-Path $PSScriptRoot "VERSION"))).Trim()
  $buildUTC = [DateTime]::UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")
- $seedHash = (Get-FileHash -LiteralPath (Join-Path $PSScriptRoot "スキル翻訳.csv") -Algorithm SHA256).Hash.ToLowerInvariant()
- & $Go build -tags native -trimpath -ldflags "-H=windowsgui -X main.buildUTC=$buildUTC -X main.translationSeedSHA256=$seedHash" -o $exePath .
+ & $Go build -tags native -trimpath -ldflags "-H=windowsgui -X main.buildUTC=$buildUTC" -o $exePath .
  if ($LASTEXITCODE -ne 0) { throw "ビルドが失敗しました" }
- $translationPath = Join-Path $OutDir "スキル翻訳.csv"
- if (-not (Test-Path -LiteralPath $translationPath)) { Copy-Item -LiteralPath "スキル翻訳.csv" -Destination $translationPath }
- if (-not (Test-Path -LiteralPath (Join-Path $OutDir '効果ID翻訳.csv'))) { Copy-Item -LiteralPath '効果ID翻訳.csv' -Destination $OutDir }
+ Copy-Item -LiteralPath "識別子翻訳.csv" -Destination $OutDir -Force
  Copy-Item -LiteralPath "native_sample.json" -Destination (Join-Path $OutDir "sample-combat.json") -Force
  Copy-Item -LiteralPath "config" -Destination $OutDir -Recurse -Force
  Copy-Item -LiteralPath "licenses" -Destination $OutDir -Recurse -Force
@@ -43,12 +41,12 @@ try {
   $leaders = @($report.trace | Where-Object { $_.battle -eq 1 -and $_.active } | ForEach-Object { $_.players[0].id })
   if (($leaders -join ',') -ne 'sample:a,sample:b,sample:a,sample:b,sample:a') { throw "サンプルの順位更新が期待値と一致しません" }
  }
- foreach ($file in @('VERSION','TRANSLATIONS_VERSION','使い方.txt','LICENSE','THIRD-PARTY.md')) { Copy-Item -LiteralPath $file -Destination $OutDir -Force }
- $actualHash = (Get-FileHash -LiteralPath $translationPath -Algorithm SHA256).Hash.ToLowerInvariant()
- $manifest = [ordered]@{ application='MABI DPS JP'; version=$version; buildUTC=$buildUTC; executable='MabiDPS-JP.exe'; executableSHA256=(Get-FileHash -LiteralPath $exePath -Algorithm SHA256).Hash.ToLowerInvariant(); effectTranslationCSV_SHA256=(Get-FileHash -LiteralPath (Join-Path $OutDir "効果ID翻訳.csv") -Algorithm SHA256).Hash.ToLowerInvariant(); translationRevision=([IO.File]::ReadAllText((Join-Path $PSScriptRoot 'TRANSLATIONS_VERSION'))).Trim(); translationSeedSHA256=$seedHash; translationCSV_SHA256=$actualHash; translationEdited=($actualHash -ne $seedHash) }
+ foreach ($file in @('VERSION','使い方.txt','LICENSE','THIRD-PARTY.md')) { Copy-Item -LiteralPath $file -Destination $OutDir -Force }
+ $manifest = [ordered]@{ application='MABI DPS JP'; version=$version; buildUTC=$buildUTC; executable='MabiDPS-JP.exe'; executableSHA256=(Get-FileHash -LiteralPath $exePath -Algorithm SHA256).Hash.ToLowerInvariant(); dictionaryMode='identifier' }
  $manifest | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $OutDir 'release-manifest.json') -Encoding utf8
  $pe = (Get-Item -LiteralPath $exePath).VersionInfo
  if ($pe.FileVersion -ne $version -or $pe.ProductVersion -ne $version) { throw 'EXE version resource mismatch' }
  Write-Host "ビルド・検証完了: $exePath / v$version"
 } finally { Pop-Location }
+
 

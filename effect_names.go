@@ -5,8 +5,6 @@ import (
 	"encoding/csv"
 	"fmt"
 	"io"
-	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
 	"sync"
@@ -91,33 +89,7 @@ func loadEffectNames() {
 	for k, v := range identifierNames {
 		effectNames[k] = v
 	}
-	exe, e := os.Executable()
-	if e != nil {
-		return
-	}
-	f, e := os.Open(filepath.Join(filepath.Dir(exe), effectTranslationCSVName))
-	if os.IsNotExist(e) {
-		return
-	}
-	if e != nil {
-		effectNamesStatus = "読込失敗"
-		return
-	}
-	defer f.Close()
-	data, e := io.ReadAll(io.LimitReader(f, (4<<20)+1))
-	if e != nil {
-		effectNamesStatus = "読込失敗"
-		return
-	}
-	names, e := parseEffectNames(data)
-	if e != nil {
-		effectNamesStatus = "読込失敗：" + e.Error()
-		return
-	}
-	for k, v := range names {
-		effectNames[k] = v
-	}
-	effectNamesStatus = fmt.Sprintf("%d件読込", len(names))
+	effectNamesStatus = identifierNamesStatus
 }
 func effectActorClass(log CombatLog, actor string) string {
 	for _, c := range []*PartyConfig{log.Party, log.Detected} {

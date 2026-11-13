@@ -558,12 +558,8 @@ func nativeModernClick(x, y int32) {
 			}
 			nativePage = "分析"
 			nativeScroll = 0
-		case "effect-csv":
-			nativeOpenEffectCSV()
 		case "app-logs":
 			nativeOpenApplicationLogs()
-		case "translation-csv":
-			nativeOpenTranslationCSV()
 		case "diagnostic":
 			nativeSaveDiagnostic()
 		case "legacy-settings":

@@ -26,8 +26,8 @@ func translationEdited() bool {
 }
 func versionInformation() map[string]any {
 	skillNamesOnce.Do(loadSkillDisplayNames)
+	identifierNamesOnce.Do(loadIdentifierNames)
 	return map[string]any{"application": "MABI DPS JP", "version": appVersion(), "buildUTC": buildUTC,
-		"translationRevision": translationRevision(), "translationEdited": translationEdited(),
-		"translationCSV": skillTranslationCSVStatus}
+		"identifierDictionary": identifierNamesStatus}
 }
 func dataSHA256(data []byte) string { return fmt.Sprintf("%x", sha256.Sum256(data)) }

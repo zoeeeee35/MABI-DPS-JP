@@ -43,9 +43,9 @@ func nativeSettingsBottom() int32 {
 		return 705 - sectionTabsHeight
 	case settingsAdvanced:
 		if rawCaptureTools {
-			return 980
+			return 809
 		}
-		return 779
+		return 608
 	case settingsOther:
 		return 680
 	case settingsMeasure:

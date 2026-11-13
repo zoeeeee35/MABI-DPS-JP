@@ -60,10 +60,7 @@ func TestLocalEffectTranslationReplay(t *testing.T) {
 	if root == "" {
 		t.Skip("local")
 	}
-	seed, e := os.ReadFile(effectTranslationCSVName)
-	if e != nil {
-		t.Fatal(e)
-	}
+	seed := []byte("職業,効果ID,日本語訳\nIceMage,0x240EEC7C,氷結継続\nPriest,0x31BBA586,サモンリンカー継続\n")
 	names, e := parseEffectNames(seed)
 	if e != nil {
 		t.Fatal(e)

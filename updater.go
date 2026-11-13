@@ -158,7 +158,7 @@ func fetchUpdate(ctx context.Context, client *http.Client, current string) (*upd
 // downloaded programs/scripts other than the single application are excluded.
 func updateFileAllowed(name string) bool {
 	switch name {
-	case "MabiDPS-JP.exe", "VERSION", "TRANSLATIONS_VERSION", "release-manifest.json", "スキル翻訳.csv", "効果ID翻訳.csv", "使い方.txt", "LICENSE", "THIRD-PARTY.md", "sample-combat.json", "効果音クレジット.txt", "Paperlogy-OFL.txt", "RoundedMplus-OFL.txt":
+	case "MabiDPS-JP.exe", "識別子翻訳.csv", "VERSION", "TRANSLATIONS_VERSION", "release-manifest.json", "スキル翻訳.csv", "効果ID翻訳.csv", "使い方.txt", "LICENSE", "THIRD-PARTY.md", "sample-combat.json", "効果音クレジット.txt", "Paperlogy-OFL.txt", "RoundedMplus-OFL.txt":
 		return true
 	}
 	ext := strings.ToLower(path.Ext(name))

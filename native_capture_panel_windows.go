@@ -47,25 +47,10 @@ func nativeAdvancedPanel(dc uintptr, left, right, y int32) {
 		ntxt(dc, s.Recording.Path, rect{left + 18, y + 149, right - 18, y + 174}, 0xA18D77, 11)
 		y += 201
 	}
-	nbox(dc, rect{left, y, right, y + 156}, 0x281B12)
-	ntxt(dc, "スキル表示名のCSV設定", rect{left + 18, y + 10, right - 16, y + 34}, 0xE9E3D9, 15)
-	color := uint32(0xADCBA6)
-	if skillTranslationCSVStatus.Error != "" {
-		color = 0xB5A1F5
-	}
-	ntxt(dc, skillTranslationStatusText(), rect{left + 18, y + 37, right - 18, y + 62}, color, 12)
-	nbutton(dc, rect{left + 18, y + 69, left + 250, y + 101}, "翻訳CSVを開く", "translation-csv", false, 0)
-	ntxt(dc, "日本語訳を編集 → CSV UTF-8で保存 → アプリ再起動", rect{left + 265, y + 75, right - 18, y + 104}, 0xAF997D, 12)
-	effectNamesOnce.Do(loadEffectNames)
-	nbutton(dc, rect{left + 18, y + 112, left + 250, y + 145}, "効果ID翻訳CSVを開く", "effect-csv", false, 0)
-	ntxt(dc, effectNamesStatus, rect{left + 265, y + 116, right - 18, y + 148}, 0xAF997D, 12)
-	y += 171
 	nbox(dc, rect{left, y, right, y + 90}, 0x281B12)
 	ntxt(dc, appWindowTitle(), rect{left + 18, y + 10, right - 18, y + 35}, 0xE9E3D9, 15)
-	revision := "翻訳データ r" + translationRevision()
-	if translationEdited() {
-		revision += "（CSV編集あり）"
-	}
+	identifierNamesOnce.Do(loadIdentifierNames)
+	revision := identifierNamesStatus
 	ntxt(dc, revision+" / ビルド日時（UTC）: "+buildUTC, rect{left + 18, y + 43, right - 18, y + 76}, 0xADCBA6, 12)
 	y += 106
 	nbox(dc, rect{left, y, right, y + 225}, 0x281B12)
