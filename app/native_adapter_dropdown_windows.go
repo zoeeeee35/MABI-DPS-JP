@@ -99,7 +99,7 @@ func nativeToggleLabel(dc uintptr, r rect, label, action string, on bool, tint u
 	pDelete.Call(brush)
 	hit := r
 	if nativeBody {
-		hit.Top = max(hit.Top, 208)
+		hit.Top = max(hit.Top, nativeBodyTop)
 		hit.Bottom = min(hit.Bottom, nativeBottom)
 	}
 	if hit.Bottom > hit.Top {
@@ -120,7 +120,7 @@ func drawNativeChoice(dc uintptr, r rect, labels, actions [2]string, active int)
 		}
 		draw(dc, labels[i], hit, color, nf(13), 0x8025)
 		if nativeBody {
-			hit.Top = max(hit.Top, 208)
+			hit.Top = max(hit.Top, nativeBodyTop)
 			hit.Bottom = min(hit.Bottom, nativeBottom)
 		}
 		if hit.Bottom > hit.Top {

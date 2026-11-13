@@ -28,6 +28,7 @@ type miniCardPreferences struct {
 type gameOverlayPreferences struct {
 	Enabled             bool
 	HideWithoutHUD      bool
+	CursorLock          bool  `json:",omitempty"`
 	IdleSeconds         int64 `json:",omitempty"`
 	miniCardPreferences       // Preserve the position saved by the previous version.
 	Barrier             miniCardPreferences

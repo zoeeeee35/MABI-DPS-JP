@@ -18,6 +18,9 @@ var nativeSettingsTab settingsTab
 var nativeDisplayDetails, nativeNoticeDetails bool
 
 func openNativeSettings(tab settingsTab) {
+	if tab == settingsMeasure {
+		tab = settingsAdvanced
+	}
 	page := "設定"
 	switch tab {
 	case settingsDisplay:
@@ -43,9 +46,9 @@ func nativeSettingsBottom() int32 {
 		return 705 - sectionTabsHeight
 	case settingsAdvanced:
 		if rawCaptureTools {
-			return 809
+			return 935
 		}
-		return 608
+		return 735
 	case settingsOther:
 		return 680
 	case settingsMeasure:
@@ -61,11 +64,11 @@ func nativeSettingsPanel(dc uintptr, left, right, y int32, mode int) {
 			label, action string
 			tab           settingsTab
 		}{
-			{"計測", "settings-section", settingsMeasure},
+
 			{"詳細", "settings-section-advanced", settingsAdvanced},
 			{"その他", "settings-section-other", settingsOther},
 		}
-		width := min(int32(170), (right-left-24)/3)
+		width := min(int32(170), (right-left-24)/2)
 		for i, item := range tabs {
 			x := left + int32(i)*(width+6)
 			nbutton(dc, rect{x, y, x + width, y + 36}, item.label, item.action, nativeSettingsTab == item.tab, int(item.tab))
@@ -95,7 +98,7 @@ func nativeSettingsPanel(dc uintptr, left, right, y int32, mode int) {
 		ntxt(dc, updateStatus, rect{left + 18, y + 145, right - 16, y + 172}, 0xE9E3D9, 13)
 		ntxt(dc, "自動確認は1日1回。適用前に確認し、設定・履歴・編集済みCSVを保持します。", rect{left + 18, y + 177, right - 16, y + 204}, 0xAF997D, 12)
 	default:
-		nativeCapturePanel(dc, left, right, y)
+		nativeAdvancedPanel(dc, left, right, y)
 	}
 }
 
@@ -127,7 +130,7 @@ func nativeDisplayPanel(dc uintptr, left, right, y int32, mode int) {
 	fill(dc, track, 0x503B2B)
 	thumb := track.Left + int32(float64(int(opacity)-60)/195*float64(track.Right-track.Left))
 	fill(dc, rect{track.Left, track.Top, thumb, track.Bottom}, 0x35ACEC)
-	hit := rect{track.Left, max(208, track.Top-10), track.Right, min(nativeBottom, track.Bottom+10)}
+	hit := rect{track.Left, max(nativeBodyTop, track.Top-10), track.Right, min(nativeBottom, track.Bottom+10)}
 	if hit.Bottom > hit.Top {
 		nativeHits = append(nativeHits, nativeHit{hit, "opacity-slider", 0})
 	}

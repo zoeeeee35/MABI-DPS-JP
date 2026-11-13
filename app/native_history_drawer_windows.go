@@ -14,19 +14,19 @@ var nativeHistoryPageSize = 1
 var nativeHistoryBounds rect
 
 func nativeHistoryDrawer(dc uintptr, left, right, bottom int32) {
-	r := rect{left, 208, min(right, left+360), bottom}
+	r := rect{left, nativeBodyTop, min(right, left+360), bottom}
 	nativeHistoryBounds = r
 	fill(dc, rect{r.Left + 4, r.Top + 4, r.Right + 4, r.Bottom}, 0x100A06)
 	nbox(dc, r, 0x302219)
 	nativeHits = append(nativeHits, nativeHit{r, "history-noop", 0})
-	ntxt(dc, "履歴（新しい順）", rect{r.Left + 14, 220, r.Right - 88, 248}, 0xEEE7E1, 16)
-	nbutton(dc, rect{r.Right - 80, 217, r.Right - 12, 250}, "閉じる", "history-toggle", false, 0)
-	nativeHistoryPageSize = max(1, int((bottom-310)/104))
+	ntxt(dc, "履歴（新しい順）", rect{r.Left + 14, (nativeBodyTop + 12), r.Right - 88, (nativeBodyTop + 40)}, 0xEEE7E1, 16)
+	nbutton(dc, rect{r.Right - 80, (nativeBodyTop + 9), r.Right - 12, (nativeBodyTop + 42)}, "閉じる", "history-toggle", false, 0)
+	nativeHistoryPageSize = max(1, int((bottom-(nativeBodyTop+102))/104))
 	nativeHistoryOffset = max(0, min(nativeHistoryOffset, max(0, len(history)-nativeHistoryPageSize)))
 	end := min(len(history), nativeHistoryOffset+nativeHistoryPageSize)
 	for i := nativeHistoryOffset; i < end; i++ {
 		h := history[i]
-		yy := int32(262 + (i-nativeHistoryOffset)*104)
+		yy := int32((nativeBodyTop + 54) + (i-nativeHistoryOffset)*104)
 		card := rect{r.Left + 10, yy, r.Right - 10, yy + 94}
 		color := uint32(0x39291D)
 		if i == historyIndex {
@@ -52,7 +52,7 @@ func nativeHistoryDrawer(dc uintptr, left, right, bottom int32) {
 		nativeHits = append(nativeHits, nativeHit{card, "history", i})
 	}
 	if len(history) == 0 {
-		ntxt(dc, "保存した履歴はまだありません。", rect{r.Left + 14, 274, r.Right - 10, 320}, 0xC8BBA9, 14)
+		ntxt(dc, "保存した履歴はまだありません。", rect{r.Left + 14, (nativeBodyTop + 66), r.Right - 10, (nativeBodyTop + 112)}, 0xC8BBA9, 14)
 	}
 	yy := bottom - 43
 	nbutton(dc, rect{r.Left + 10, yy, r.Left + 72, yy + 32}, "前へ", "history-prev", false, 0)

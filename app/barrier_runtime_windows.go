@@ -372,7 +372,7 @@ func nativeBarrierPanel(dc uintptr, left, right, y int32) {
 	track := rect{left + 155, y + 365, right - 35, y + 374}
 	fill(dc, track, 0x44382C)
 	fill(dc, rect{track.Left, track.Top, track.Left + (track.Right-track.Left)*int32(barrierConfig.Volume)/100, track.Bottom}, 0x55B6EE)
-	hit := rect{track.Left, max(208, y+347), track.Right, min(nativeBottom, y+391)}
+	hit := rect{track.Left, max(nativeBodyTop, y+347), track.Right, min(nativeBottom, y+391)}
 	if hit.Bottom > hit.Top {
 		nativeHits = append(nativeHits, nativeHit{hit, "barrier-volume", 0})
 	}

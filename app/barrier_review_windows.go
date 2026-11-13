@@ -67,7 +67,7 @@ func barrierUIReview(dir string) map[string]any {
 	_ = captureOwnSurface(filepath.Join(dir, "overlay-barrier-settings.png"), mainWindow, true)
 	headerToggle := false
 	for _, h := range nativeHits {
-		if h.Action == "barrier-master" && h.R.Top == 101 {
+		if h.Action == "barrier-master" && h.R.Top == nativeToolbarTop {
 			headerToggle = true
 		}
 	}

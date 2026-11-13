@@ -9,6 +9,10 @@ import (
 	"unsafe"
 )
 
+const nativeBodyTop = 159
+const nativeToolbarTop int32 = 52
+const nativeRemovedHeaderHeight int32 = 49
+
 var nativeModern bool
 var nativePage = "分析"
 var nativeScroll int32
@@ -86,7 +90,7 @@ func nbutton(dc uintptr, r rect, label, action string, active bool, index int) {
 	}
 	hit := r
 	if nativeBody {
-		hit.Top = max(hit.Top, 208)
+		hit.Top = max(hit.Top, nativeBodyTop)
 		hit.Bottom = min(hit.Bottom, nativeBottom)
 		if hit.Bottom <= hit.Top {
 			return
@@ -110,21 +114,14 @@ func nativeLayout(window, dc uintptr) {
 	ntxt(dc, "v"+appVersion(), rect{142, 13, 198, 37}, 0xE9E3D9, 11)
 
 	nbutton(dc, rect{r.Right - 94, 6, r.Right - 14, 37}, "設定", "settings", nativePage == "設定", 0)
-	fill(dc, rect{0, 43, r.Right, 92}, 0x251A14)
-	nativeAdapterField(dc, rect{14, 51, r.Right - 425, 83})
-	nativeNetworkMeter(dc, rect{r.Right - 415, 51, r.Right - 230, 83})
-	captureLabel := "キャプチャ開始"
-	if captureCtl.running() {
-		captureLabel = "キャプチャ停止"
-	}
-	nbutton(dc, rect{r.Right - 225, 51, r.Right - 14, 83}, captureLabel, "capture", captureCtl.running(), 0)
 	left, right := int32(16), r.Right-18
-	nbox(dc, rect{left, 101, left + 122, 134}, 0x283C52)
-	nativeControlIcon(dc, "layers", left+9, 110, 0x42C4F5)
-	ncenter(dc, "オーバーレイ", rect{left + 25, 109, left + 122, 134}, 0x42C4F5, 12)
-	nativeToggleLabel(dc, rect{left + 130, 101, left + 317, 134}, "クリック透過", "click", overlayPassesClicks(), 0x40372D)
-	nativeToggleLabel(dc, rect{left + 325, 101, left + 454, 134}, "表示", "overlay", overlayShown, 0xA95C7C)
-	nativeToggleLabel(dc, rect{left + 462, 101, left + 622, 134}, "結界通知", "barrier-master", barrierConfig.Enabled, 0x685140)
+	t := nativeToolbarTop
+	nbox(dc, rect{left, t, left + 122, t + 33}, 0x283C52)
+	nativeControlIcon(dc, "layers", left+9, t+9, 0x42C4F5)
+	ncenter(dc, "オーバーレイ", rect{left + 25, t + 8, left + 122, t + 33}, 0x42C4F5, 12)
+	nativeToggleLabel(dc, rect{left + 130, t, left + 317, t + 33}, "クリック透過", "click", overlayPassesClicks(), 0x40372D)
+	nativeToggleLabel(dc, rect{left + 325, t, left + 454, t + 33}, "表示", "overlay", overlayShown, 0xA95C7C)
+	nativeToggleLabel(dc, rect{left + 462, t, left + 622, t + 33}, "結界通知", "barrier-master", barrierConfig.Enabled, 0x685140)
 	scope := 0
 	if historyIndex >= 0 {
 		scope = -1
@@ -135,30 +132,23 @@ func nativeLayout(window, dc uintptr) {
 	if gameOverlay.Enabled {
 		mode = 1
 	}
-	drawNativeChoice(dc, rect{left + 630, 101, left + 785, 134}, [2]string{"現在戦闘", "記録全体"}, [2]string{"scope-current", "scope-all"}, scope)
-	drawNativeChoice(dc, rect{left + 793, 101, left + 963, 134}, [2]string{"通常表示", "ミニ表示"}, [2]string{"overlay-regular", "overlay-game"}, mode)
-	nbox(dc, rect{left, 147, right, r.Bottom - 12}, 0x251810)
+	drawNativeChoice(dc, rect{left + 630, t, left + 785, t + 33}, [2]string{"現在戦闘", "記録全体"}, [2]string{"scope-current", "scope-all"}, scope)
+	drawNativeChoice(dc, rect{left + 793, t, left + 963, t + 33}, [2]string{"通常表示", "ミニ表示"}, [2]string{"overlay-regular", "overlay-game"}, mode)
+	nbox(dc, rect{left, t + 46, right, r.Bottom - 12}, 0x251810)
 	historyLabel := "履歴 ▸"
 	if nativeHistoryOpen {
 		historyLabel = "履歴 ▾"
 	}
-	nbutton(dc, rect{left + 12, 157, left + 110, 190}, historyLabel, "history-toggle", nativeHistoryOpen, 0)
+	nbutton(dc, rect{left + 12, t + 56, left + 110, t + 89}, historyLabel, "history-toggle", nativeHistoryOpen, 0)
 	for i, name := range []string{"分析", "バフ・スキル", "オーバーレイ", "結界通知"} {
 		x := left + 118 + int32(i*143)
-		page := name
+		page, label := name, name
 		if name == "バフ・スキル" {
-			page = "スキル"
+			page, label = "スキル", "スキル"
 		}
-		label := name
-		if name == "攻撃対象" && currentTargetFilter() != "" {
-			label = "攻撃対象 ●"
-		}
-		if name == "バフ・スキル" {
-			label = "スキル"
-		}
-		nbutton(dc, rect{x, 157, x + 134, 190}, label, "page:"+page, nativePage == page, 0)
+		nbutton(dc, rect{x, t + 56, x + 134, t + 89}, label, "page:"+page, nativePage == page, 0)
 	}
-	fill(dc, rect{left + 1, 200, right - 1, 201}, 0x4B382A)
+	fill(dc, rect{left + 1, t + 99, right - 1, t + 100}, 0x4B382A)
 	saved, _, _ := gdi32.NewProc("SaveDC").Call(dc)
 	defer func() {
 		gdi32.NewProc("RestoreDC").Call(dc, saved)
@@ -176,7 +166,7 @@ func nativeLayout(window, dc uintptr) {
 			nativeAdapterDropdown(dc, r.Bottom-22)
 		}
 	}()
-	gdi32.NewProc("IntersectClipRect").Call(dc, signed(left+9), 208, signed(right-9), signed(r.Bottom-18))
+	gdi32.NewProc("IntersectClipRect").Call(dc, signed(left+9), nativeBodyTop, signed(right-9), signed(r.Bottom-18))
 	nativeBody = true
 	x0, x1 := left+10, right-10
 	var b *Battle
@@ -186,7 +176,13 @@ func nativeLayout(window, dc uintptr) {
 	contentBottom := int32(650)
 	switch nativePage {
 	case "分析":
-		contentBottom = 1399 + int32(max(1, len(nativeSoloRows(b)))*44)
+		if nativeAnalysisSettings {
+			contentBottom = 790
+		} else {
+			contentBottom = 1399 + int32(max(1, len(nativeSoloRows(b)))*44)
+		}
+	case "取得設定":
+		contentBottom = 670
 	case "攻撃対象":
 		contentBottom = 450 + int32(len(damageTargets(baseDisplayBattle(), soloLog()))*49)
 	case "設定", "オーバーレイ", "結界通知":
@@ -200,15 +196,20 @@ func nativeLayout(window, dc uintptr) {
 	case "スキル":
 		contentBottom = 486 + int32(max(1, len(nativeSoloRows(b)))*44)
 	}
+	contentBottom -= nativeRemovedHeaderHeight
 	nativeMaxScroll = max(0, contentBottom-nativeBottom)
 	nativeScroll = min(nativeScroll, nativeMaxScroll)
-	y := int32(213) - nativeScroll
+	y := nativeBodyTop + 5 - nativeScroll
 	switch nativePage {
 	case "攻撃対象":
 		nativeTargetPanel(dc, x0, x1, y)
 	case "分析":
+		if nativeAnalysisSettings {
+			nativeCapturePage(dc, x0, x1, y)
+			break
+		}
 		nbox(dc, rect{x0, y, x1, y + 47}, 0x281C15)
-		for i, tool := range []struct{ label, action string }{{"初期化", "reset"}, {"戦闘結果を保存", "save"}, {"サンプル再生", "sample"}, {"スクリーンショット", "screenshot"}, {"取得設定", "settings"}} {
+		for i, tool := range []struct{ label, action string }{{"初期化", "reset"}, {"戦闘結果を保存", "save"}, {"サンプル再生", "sample"}, {"スクリーンショット", "screenshot"}, {"取得設定", "capture-settings"}} {
 			xx := x0 + 10 + int32(i*160)
 			nbutton(dc, rect{xx, y + 7, xx + 151, y + 39}, tool.label, tool.action, false, 0)
 		}
@@ -275,6 +276,8 @@ func nativeLayout(window, dc uintptr) {
 		}
 	case "設定", "オーバーレイ", "結界通知":
 		nativeSettingsPanel(dc, x0, x1, y, mode)
+	case "取得設定":
+		nativeCapturePage(dc, x0, x1, y)
 	case "アダプター選択":
 		ntxt(dc, "ネットワークアダプターを選択", rect{x0 + 12, y + 8, x1, y + 40}, 0xE5D6C5, 17)
 		for i, d := range captureAdapterList {
@@ -294,7 +297,7 @@ func nativeLayout(window, dc uintptr) {
 			ntxt(dc, historyDisplayTitle(h), rect{r.Left + 12, yy + 8, r.Right - 8, yy + 33}, 0xE9E2D7, 15)
 			ntxt(dc, historyDisplayDetail(h), rect{r.Left + 12, yy + 36, r.Right - 8, yy + 61}, 0xB9A184, 13)
 			clipped := r
-			clipped.Top = max(208, clipped.Top)
+			clipped.Top = max(nativeBodyTop, clipped.Top)
 			clipped.Bottom = min(nativeBottom, clipped.Bottom)
 			if clipped.Bottom > clipped.Top {
 				nativeHits = append(nativeHits, nativeHit{clipped, "history", i})
@@ -387,7 +390,7 @@ func nativeRank(dc uintptr, b *Battle, left, right, y int32) {
 	}
 	for i, p := range b.Players {
 		yy := y + int32(i*50)
-		hit := rect{left, max(208, yy), right, min(nativeBottom, yy+43)}
+		hit := rect{left, max(nativeBodyTop, yy), right, min(nativeBottom, yy+43)}
 		if hit.Bottom > hit.Top {
 			nativeHits = append(nativeHits, nativeHit{hit, "player-select", i})
 		}
@@ -581,9 +584,11 @@ func nativeModernClick(x, y int32) {
 				ensureNativeCapture()
 				startOrStopCapture()
 				if captureSetupError != "" {
-					openNativeSettings(settingsMeasure)
+					openNativeCapturePage()
 				}
 			}
+		case "capture-settings":
+			openNativeCapturePage()
 		case "settings":
 			openNativeSettings(settingsMeasure)
 		case "capture-auto":
@@ -614,6 +619,10 @@ func nativeModernClick(x, y int32) {
 		case "update-auto":
 			updatePrefs.CheckOnStartup = !updatePrefs.CheckOnStartup
 			saveUpdatePreferences()
+		case "cursor-lock":
+			gameOverlay.CursorLock = !gameOverlay.CursorLock
+			saveGameOverlay()
+			tickCursorLock()
 		case "idle-edit":
 			openMiniSizeEditor(nil)
 		case "overlay-regular":
@@ -648,6 +657,7 @@ func nativeModernClick(x, y int32) {
 		default:
 			if len(h.Action) > 5 && h.Action[:5] == "page:" {
 				nativePage = h.Action[5:]
+				nativeAnalysisSettings = false
 				nativeScroll = 0
 			}
 		}
@@ -668,10 +678,10 @@ func nativeScrollRail(dc uintptr, right, bottom int32) {
 	if nativeMaxScroll <= 0 {
 		return
 	}
-	rail := rect{right - 7, 208, right - 1, bottom}
+	rail := rect{right - 7, nativeBodyTop, right - 1, bottom}
 	fill(dc, rail, 0x2A1D16)
-	height := max(int32(25), (bottom-208)*(bottom-208)/(bottom-208+nativeMaxScroll))
-	top := int32(208) + nativeScroll*(bottom-208-height)/max(1, nativeMaxScroll)
+	height := max(int32(25), (bottom-nativeBodyTop)*(bottom-nativeBodyTop)/(bottom-nativeBodyTop+nativeMaxScroll))
+	top := int32(nativeBodyTop) + nativeScroll*(bottom-nativeBodyTop-height)/max(1, nativeMaxScroll)
 	nbox(dc, rect{rail.Left, top, rail.Right, top + height}, 0x695240)
 	nativeHits = append(nativeHits, nativeHit{rail, "scroll-to", 0})
 }

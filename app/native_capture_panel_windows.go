@@ -14,22 +14,46 @@ func nativeAdapterLabel() string {
 	}
 	return "ネットワークアダプターを選択してください"
 }
+
+var nativeAnalysisSettings bool
+
 func nativeCapturePanel(dc uintptr, left, right, y int32) {
-	s := captureCtl.snapshot()
-	nbox(dc, rect{left, y, right, y + 296}, 0x281B12)
-	ntxt(dc, "データ取得", rect{left + 18, y + 14, right - 16, y + 40}, 0xE9E3D9, 16)
-	ntxt(dc, "ゲーム接続のあるアダプターで自動開始。上部バーから手動操作もできます。", rect{left + 18, y + 48, right - 16, y + 72}, 0xAF997D, 12)
-	ntxt(dc, stageText(s.Stage)+" / "+s.Detail, rect{left + 18, y + 77, right - 18, y + 104}, 0xAACF8A, 12)
-	if captureSetupError != "" {
-		ntxt(dc, captureSetupError, rect{left + 18, y + 107, right - 18, y + 137}, 0xB5A1F5, 12)
-	}
-	nativeToggleButton(dc, rect{left + 18, y + 145, left + 330, y + 180}, "キャプチャの自動開始", "capture-auto", autoCapturePrefs.Enabled, 0xA95C7C)
-	ntxt(dc, autoCaptureStatus, rect{left + 18, y + 185, right - 16, y + 208}, 0xAF997D, 12)
-	nativeToggleButton(dc, rect{left + 18, y + 214, left + 330, y + 249}, "自分IDの自動推定", "solo-autotoggle", soloAutoEnabled, 0xA95C7C)
-	nbutton(dc, rect{left + 18, y + 257, left + 290, y + 288}, fmt.Sprintf("戦闘終了の待機時間  %d秒", idle/1000), "idle-edit", false, 0)
-	ntxt(dc, "最後のダメージからの待機時間。計測時間には含めません。", rect{left + 304, y + 264, right - 16, y + 290}, 0xAF997D, 12)
+	nbox(dc, rect{left, y, right, y + 166}, 0x281B12)
+	ntxt(dc, "戦闘の計測", rect{left + 18, y + 14, right - 16, y + 40}, 0xE9E3D9, 16)
+	nativeToggleButton(dc, rect{left + 18, y + 58, left + 330, y + 96}, "自分IDの自動推定", "solo-autotoggle", soloAutoEnabled, 0xA95C7C)
+	nbutton(dc, rect{left + 18, y + 112, left + 290, y + 150}, fmt.Sprintf("戦闘終了の待機時間  %d秒", idle/1000), "idle-edit", false, 0)
+	ntxt(dc, "最後のダメージからの待機時間。計測時間には含めません。", rect{left + 304, y + 121, right - 16, y + 150}, 0xAF997D, 12)
 }
 
+func openNativeCapturePage() {
+	nativePage, nativeScroll = "分析", 0
+	nativeAnalysisSettings = true
+	nativeAdaptersOpen = false
+}
+
+func nativeCapturePage(dc uintptr, left, right, y int32) {
+	ntxt(dc, "分析 / 取得設定", rect{left + 14, y + 8, right - 180, y + 40}, 0xE9E3D9, 17)
+	nbutton(dc, rect{right - 160, y + 4, right - 12, y + 42}, "分析に戻る", "page:分析", false, 0)
+	y += 58
+	nbox(dc, rect{left, y, right, y + 315}, 0x281B12)
+	ntxt(dc, "ネットワークアダプター", rect{left + 18, y + 14, right - 16, y + 42}, 0xE9E3D9, 15)
+	nativeAdapterField(dc, rect{left + 18, y + 52, right - 18, y + 90})
+	active := captureCtl.running()
+	label := "キャプチャ開始"
+	if active {
+		label = "キャプチャ停止"
+	}
+	nbutton(dc, rect{left + 18, y + 108, left + 260, y + 146}, label, "capture", active, 0)
+	nativeNetworkMeter(dc, rect{left + 276, y + 108, left + 461, y + 146})
+	s := captureCtl.snapshot()
+	ntxt(dc, stageText(s.Stage)+" / "+s.Detail, rect{left + 18, y + 160, right - 18, y + 194}, 0xAACF8A, 13)
+	if captureSetupError != "" {
+		ntxt(dc, captureSetupError, rect{left + 18, y + 194, right - 18, y + 228}, 0xB5A1F5, 12)
+	}
+	nativeToggleButton(dc, rect{left + 18, y + 235, left + 330, y + 273}, "キャプチャの自動開始", "capture-auto", autoCapturePrefs.Enabled, 0xA95C7C)
+	ntxt(dc, autoCaptureStatus, rect{left + 18, y + 279, right - 18, y + 308}, 0xAF997D, 12)
+	nativeCapturePanel(dc, left, right, y+331)
+}
 func nativeAdvancedPanel(dc uintptr, left, right, y int32) {
 	s := captureCtl.snapshot()
 	if rawCaptureTools {
@@ -67,4 +91,9 @@ func nativeAdvancedPanel(dc uintptr, left, right, y int32) {
 	}
 	nbutton(dc, rect{flagReviewX, y + 148, flagReviewX + 280, y + 186}, "判定フラグの検証・CSV", "flag-review", false, 0)
 	nbutton(dc, rect{left + 18, y + 192, left + 298, y + 224}, "自分IDを修正", "self-correction", false, 0)
+	y += 245
+	nbox(dc, rect{left, y, right, y + 110}, 0x281B12)
+	ntxt(dc, "ゲーム操作", rect{left + 18, y + 10, right - 18, y + 37}, 0xE9E3D9, 15)
+	nativeToggleButton(dc, rect{left + 18, y + 42, left + 390, y + 80}, "ゲーム内にカーソルを固定", "cursor-lock", gameOverlay.CursorLock, 0xA95C7C)
+	ntxt(dc, "ゲームが前面の間のみ。Alt押下中・他の画面への切り替えで解除します。", rect{left + 18, y + 84, right - 18, y + 108}, 0xAF997D, 12)
 }

@@ -969,6 +969,11 @@ func mainProc(window uintptr, msg uint32, w, l uintptr) uintptr {
 		}
 		return 0
 	case wmTimer:
+		if w == 2 {
+			tickCursorLock()
+			return 0
+		}
+		tickCursorLock()
 		pumpUpdateEvents()
 		if updateExiting {
 			return 0
@@ -1055,10 +1060,12 @@ func writeNativeTest() {
 	var layerColor, layerFlags uint32
 	layerOK, _, _ := user32.NewProc("GetLayeredWindowAttributes").Call(overlayWindow, uintptr(unsafe.Pointer(&layerColor)), uintptr(unsafe.Pointer(&actualAlpha)), uintptr(unsafe.Pointer(&layerFlags)))
 	payload := map[string]any{"version": 1, "liveVerified": false, "browserUsed": false, "overlayWindowCreated": overlayWindow != 0, "layered": style&exLayered != 0, "clickThrough": style&exTransparent != 0, "opacity": actualAlpha, "layerAttributesApplied": layerOK != 0 && layerFlags&2 != 0, "previewError": previewError, "topmost": style&exTopmost != 0, "noActivate": style&exNoActivate != 0, "trace": trace, "historyCount": len(history), "result": session.Result}
+	payload["captureSettingsReviewError"] = reviewCaptureSettingsSurface(filepath.Dir(nativeTestPath))
 	data, _ := json.MarshalIndent(payload, "", "  ")
 	_ = os.WriteFile(nativeTestPath, data, 0600)
 }
 func main() {
+	defer releaseCursorLock()
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
 	updateHelper := flag.Bool("update-helper", false, "検証済み更新の適用用（内部処理）")
@@ -1287,6 +1294,7 @@ func main() {
 	initUpdateRuntime(*dir, *uiTest != "" || *candidateCheck != "" || *candidateReplay != "")
 	initAutoCapture(*dir, !nativeModern || *uiTest != "" || *candidateCheck != "" || *candidateReplay != "")
 	pSetTimer.Call(mainWindow, 1, 100, 0)
+	pSetTimer.Call(mainWindow, 2, 25, 0)
 	if nativeTestPath != "" {
 		if *modernUITest {
 			setGameOverlay(false)

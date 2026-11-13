@@ -69,7 +69,7 @@ func nativePieMove(window uintptr, x, y int32) {
 	}
 	key := ""
 	if nativePage == "分析" && !nativeAdaptersOpen && !nativeHistoryOpen && !nativeSkillTargetsOpen {
-		if i := skillPieHit(nativePieSlices, float64(x), float64(y), nativePieCX, nativePieCY, nativePieRadius); i >= 0 && y >= 208 && y < nativeBottom {
+		if i := skillPieHit(nativePieSlices, float64(x), float64(y), nativePieCX, nativePieCY, nativePieRadius); i >= 0 && y >= nativeBodyTop && y < nativeBottom {
 			key = nativePieSlices[i].Key
 		}
 	}
@@ -127,7 +127,7 @@ func nativePieTooltip(dc uintptr, width, height int32) {
 		return
 	}
 	i := skillPieHit(nativePieSlices, float64(nativePieMouseX), float64(nativePieMouseY), nativePieCX, nativePieCY, nativePieRadius)
-	if i < 0 || nativePieMouseY < 208 || nativePieMouseY >= nativeBottom {
+	if i < 0 || nativePieMouseY < nativeBodyTop || nativePieMouseY >= nativeBottom {
 		return
 	}
 	s := nativePieSlices[i]
@@ -139,7 +139,7 @@ func nativePieTooltip(dc uintptr, width, height int32) {
 	lines = append(lines, fmt.Sprintf("ダメージ %s　割合 %.2f%%", formatNum(float64(s.Damage)), s.Share*100))
 	popupHeight := int32(22*len(lines) + 24)
 	x := min(max(16, nativePieMouseX+18), width-popupWidth-16)
-	y := min(max(208, nativePieMouseY+18), height-popupHeight-16)
+	y := min(max(nativeBodyTop, nativePieMouseY+18), height-popupHeight-16)
 	y = max(16, y)
 	nbox(dc, rect{x + 3, y + 3, x + popupWidth + 3, y + popupHeight + 3}, 0x100C09)
 	nbox(dc, rect{x, y, x + popupWidth, y + popupHeight}, 0x493C2B)

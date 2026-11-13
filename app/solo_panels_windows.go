@@ -82,7 +82,7 @@ func nativeSoloSkillPanel(dc uintptr, b *Battle, left, right, y int32) {
 			nbox(dc, r, color)
 			ncenter(dc, label, r, 0xD1B294, 14)
 			clipped := r
-			clipped.Top = max(208, clipped.Top)
+			clipped.Top = max(nativeBodyTop, clipped.Top)
 			clipped.Bottom = min(nativeBottom, clipped.Bottom)
 			if clipped.Bottom > clipped.Top {
 				nativeHits = append(nativeHits, nativeHit{clipped, "skill-sort", column})
@@ -107,7 +107,7 @@ func nativeSoloSkillPanel(dc uintptr, b *Battle, left, right, y int32) {
 				label = fmt.Sprintf("▼ 未分類（%d項目）", len(r.Children))
 			}
 			hit := rect{pos(0), yy, pos(1), yy + 34}
-			hit.Top = max(208, hit.Top)
+			hit.Top = max(nativeBodyTop, hit.Top)
 			hit.Bottom = min(nativeBottom, hit.Bottom)
 			if hit.Bottom > hit.Top {
 				nativeHits = append(nativeHits, nativeHit{hit, "unknown-effects", 0})

@@ -36,7 +36,8 @@ try {
   if ($proc.ExitCode -ne 0) { throw "GUI自動テストが異常終了しました" }
   if ((Get-Item -LiteralPath $reportPath).LastWriteTimeUtc -lt $started) { throw "GUI検証結果が更新されていません" }
   $report = Get-Content -LiteralPath $reportPath -Raw | ConvertFrom-Json
-  if (-not $report.layered -or -not $report.topmost -or -not $report.noActivate -or -not $report.clickThrough -or -not $report.layerAttributesApplied -or $report.opacity -ne 220 -or $report.previewError -ne "" -or $report.liveVerified -or $report.historyCount -ne 2) { throw "GUI自動テストの状態が期待値と一致しません" }
+  if ($report.captureSettingsReviewError -ne "") { throw $report.captureSettingsReviewError }
+ if (-not $report.layered -or -not $report.topmost -or -not $report.noActivate -or -not $report.clickThrough -or -not $report.layerAttributesApplied -or $report.opacity -ne 220 -or $report.previewError -ne "" -or $report.liveVerified -or $report.historyCount -ne 2) { throw "GUI自動テストの状態が期待値と一致しません" }
   if ($report.result.battles[0].damage -ne 22300 -or $report.result.battles[1].damage -ne 9500) { throw "GUI再生時の合計ダメージが一致しません" }
   $leaders = @($report.trace | Where-Object { $_.battle -eq 1 -and $_.active } | ForEach-Object { $_.players[0].id })
   if (($leaders -join ',') -ne 'sample:a,sample:b,sample:a,sample:b,sample:a') { throw "サンプルの順位更新が期待値と一致しません" }
@@ -48,5 +49,6 @@ try {
  if ($pe.FileVersion -ne $version -or $pe.ProductVersion -ne $version) { throw 'EXE version resource mismatch' }
  Write-Host "ビルド・検証完了: $exePath / v$version"
 } finally { Pop-Location }
+
 
 

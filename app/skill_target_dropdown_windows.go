@@ -17,14 +17,14 @@ func nativeSkillTargetDropdown(dc uintptr, bottom int32) {
 	rows := len(nativeTargetRows) + 1
 	top := nativeSkillTargetField.Bottom + 4
 	room := bottom - top - 32
-	above := nativeSkillTargetField.Top - 208 - 4 - 32
+	above := nativeSkillTargetField.Top - nativeBodyTop - 4 - 32
 	upward := room < 42 && above > room
 	if upward {
 		room = above
 	}
 	nativeSkillTargetVisible = max(1, min(rows, int(room/42)))
 	if upward {
-		top = max(208, nativeSkillTargetField.Top-4-28-int32(nativeSkillTargetVisible*42))
+		top = max(nativeBodyTop, nativeSkillTargetField.Top-4-28-int32(nativeSkillTargetVisible*42))
 	}
 	nativeSkillTargetOffset = max(0, min(max(0, rows-nativeSkillTargetVisible), nativeSkillTargetOffset))
 	nativeSkillTargetBounds = rect{nativeSkillTargetField.Left, top, nativeSkillTargetField.Right, top + 28 + int32(nativeSkillTargetVisible*42)}
