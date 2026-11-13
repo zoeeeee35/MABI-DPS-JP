@@ -44,6 +44,10 @@ func soloOverlayClick(window uintptr, x, y int32) bool {
 	}
 	x = x * 360 / r.Right
 	y = y*fantasyOverlayHeight/r.Bottom + overlayResourceGap
+	y = overlayControlY(y)
+	if y < 0 {
+		return true
+	}
 	if y >= 305 && y < 329 {
 		switch int((x - 18) / 82) {
 		case 0:

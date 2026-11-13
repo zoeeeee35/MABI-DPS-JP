@@ -51,6 +51,12 @@ func japaneseSkillName(internal string) string {
 	return internal
 }
 func skillRowDisplayName(r SkillDamageRow) string {
+	if strings.HasPrefix(r.Key, "skill:") || strings.HasPrefix(r.Key, "group:") {
+		identifierNamesOnce.Do(loadIdentifierNames)
+		if label := identifierRowName(r, identifierNames); label != "" {
+			return label
+		}
+	}
 	if !strings.HasPrefix(r.Key, "group:") {
 		return japaneseSkillName(r.Name)
 	}
@@ -71,10 +77,10 @@ func skillRowDisplayName(r SkillDamageRow) string {
 		}
 	}
 	if allMelee {
-		return "通常攻撃（近接・スキル群）"
+		return "通常攻撃（近接）"
 	}
 	if len(names) > 0 {
-		return strings.Join(names, " / ") + "（スキル群）"
+		return strings.Join(names, " / ")
 	}
 	return r.Name
 }

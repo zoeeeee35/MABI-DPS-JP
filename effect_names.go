@@ -87,6 +87,10 @@ func parseEffectNames(data []byte) (map[effectNameKey]string, error) {
 	return out, nil
 }
 func loadEffectNames() {
+	identifierNamesOnce.Do(loadIdentifierNames)
+	for k, v := range identifierNames {
+		effectNames[k] = v
+	}
 	exe, e := os.Executable()
 	if e != nil {
 		return
@@ -110,7 +114,9 @@ func loadEffectNames() {
 		effectNamesStatus = "読込失敗：" + e.Error()
 		return
 	}
-	effectNames = names
+	for k, v := range names {
+		effectNames[k] = v
+	}
 	effectNamesStatus = fmt.Sprintf("%d件読込", len(names))
 }
 func effectActorClass(log CombatLog, actor string) string {
@@ -140,6 +146,10 @@ func effectActorClass(log CombatLog, actor string) string {
 func effectName(log CombatLog, h Hit, names map[effectNameKey]string) string {
 	if h.Link == nil || !h.Link.Paired || h.Link.Effect == 0 {
 		return ""
+	}
+	identifierNamesOnce.Do(loadIdentifierNames)
+	if label := identifierNames[effectNameKey{"*", h.Link.Effect}]; label != "" {
+		return label
 	}
 	if label := names[effectNameKey{effectActorClass(log, h.PlayerID), h.Link.Effect}]; label != "" {
 		return label

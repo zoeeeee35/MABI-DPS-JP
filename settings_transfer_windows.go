@@ -14,7 +14,7 @@ import (
 	"unsafe"
 )
 
-var transferableSettings = []string{"game-overlay.json", "barrier-settings.json"}
+var transferableSettings = []string{"game-overlay.json", "barrier-settings.json", "update-settings.json", "capture-start.json"}
 
 func readTransferSetting(path string) ([]byte, error) {
 	info, err := os.Lstat(path)
@@ -67,6 +67,10 @@ func importPreviousSettings(source, destination string) (int, string, error) {
 			typed = new(gameOverlayPreferences)
 		case "barrier-settings.json":
 			typed = new(BarrierSettings)
+		case "update-settings.json":
+			typed = new(updatePreferences)
+		case "capture-start.json":
+			typed = new(autoCaptureSettings)
 		}
 		if json.Unmarshal(data, &fields) != nil || len(fields) == 0 || json.Unmarshal(data, typed) != nil {
 			return 0, "", fmt.Errorf("読み込めない設定ファイルがあります: %s", name)

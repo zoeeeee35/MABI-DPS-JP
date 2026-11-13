@@ -20,7 +20,7 @@ func TestJapaneseSkillGroupDoesNotClassifyByToken(t *testing.T) {
 	}
 	r.names = []string{"MeleeDefaultAttack_1", "MeleeDefaultAttack_2"}
 	before := r
-	if got := skillRowDisplayName(r); got != "通常攻撃（近接・スキル群）" {
+	if got := skillRowDisplayName(r); got != "通常攻撃（近接）" {
 		t.Fatal(got)
 	}
 	if !reflect.DeepEqual(before, r) {

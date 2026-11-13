@@ -361,7 +361,7 @@ func updateDisplay() {
 	desiredHeight := int32(166 + 44*count)
 	desiredWidth := uintptr(440)
 	if soloMode && nativeModern {
-		desiredHeight = 400
+		desiredHeight = fantasyOverlayHeight
 		desiredWidth = 360
 	}
 	if !gameOverlay.Enabled && !overlayUserSized && overlayWindow != 0 && overlayRect.Bottom != desiredHeight {
@@ -542,6 +542,7 @@ func onCommand(id, notification int) {
 		return
 	}
 	if id == idSample || id == idImport || id == idReset || (id == idHistory && notification == 1) {
+		pauseAutoCapture()
 		jpFromCapture = false
 		jpInput = nil
 		jpCandidateView = false
@@ -786,11 +787,16 @@ func overlayProc(window uintptr, msg uint32, w, l uintptr) uintptr {
 	}
 	if msg == 0x02A3 {
 		nativeOverlayHover = -1
+		overlaySkillHover = -1
 		invalidate(window)
 		return 0
 	}
 
 	switch msg {
+	case 0x020A:
+		if nativeModern && soloMode && !clickThrough && overlaySkillsScroll(window, w, l) {
+			return 0
+		}
 	case wmDestroy:
 		releasePaintBuffer(window)
 		return 0
@@ -809,8 +815,12 @@ func overlayProc(window uintptr, msg uint32, w, l uintptr) uintptr {
 		return 0
 	case wmSize:
 		width, height := int32(l&0xffff), int32((l>>16)&0xffff)
-		if w != 1 && width > 0 && height > 0 && (width < 340 || height < 210) {
-			pSetWindowPos.Call(window, 0, 0, 0, uintptr(max(width, 340)), uintptr(max(height, 210)), 0x0016)
+		minimumHeight := int32(210)
+		if nativeModern && soloMode {
+			minimumHeight = 480
+		}
+		if w != 1 && width > 0 && height > 0 && (width < 340 || height < minimumHeight) {
+			pSetWindowPos.Call(window, 0, 0, 0, uintptr(max(width, 340)), uintptr(max(height, minimumHeight)), 0x0016)
 		}
 		updateOverlayRegion(window)
 		return 0
@@ -959,6 +969,11 @@ func mainProc(window uintptr, msg uint32, w, l uintptr) uintptr {
 		}
 		return 0
 	case wmTimer:
+		pumpUpdateEvents()
+		if updateExiting {
+			return 0
+		}
+		tickAutoCapture(time.Now())
 		tickBarrierRuntime(time.Now())
 		syncGameOverlay()
 		if !soloTimerEnd.IsZero() && time.Until(soloTimerEnd) > -time.Second {
@@ -1046,8 +1061,10 @@ func writeNativeTest() {
 func main() {
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
+	updateHelper := flag.Bool("update-helper", false, "検証済み更新の適用用（内部処理）")
 	dir := flag.String("data-dir", "", "履歴保存先（既定: EXEと同じ場所のdata）")
 	uiTest := flag.String("ui-self-test", "", "サンプル再生後に検証結果をJSON保存して終了")
+	modernUITest := flag.Bool("modern-ui-test", false, "ui-self-testで通常オーバーレイの新UIを描画")
 	probe := flag.String("capture-probe", "", "生データを保存せず診断件数をJSONへ出力")
 	adapter := flag.Int("adapter", -1, "診断用のアダプター番号")
 	seconds := flag.Int("seconds", 8, "診断時間（1〜60秒）")
@@ -1080,6 +1097,10 @@ func main() {
 	barrierProbeReport := flag.String("barrier-probe-report", "", "通知API検証JSONの出力先")
 	barrierProbeSound := flag.String("barrier-probe-sound", "", "試聴用の音声ファイル")
 	flag.Parse()
+	if *updateHelper {
+		runUpdateHelper()
+		return
+	}
 	if *barrierProbe != "" && *barrierProbeReport != "" {
 		runBarrierProbe(*barrierProbe, *barrierProbeReport, *barrierProbeSound)
 		return
@@ -1112,7 +1133,7 @@ func main() {
 		}
 		return
 	}
-	nativeModern = !*classicUI && *uiTest == ""
+	nativeModern = !*classicUI && (*uiTest == "" || *modernUITest)
 	if rawCaptureTools && *deleteDir != "" {
 		if e := deleteLocalRecordings(*deleteDir); e != nil {
 			os.Exit(1)
@@ -1175,7 +1196,7 @@ func main() {
 		return
 	}
 	if *uiTest == "" && *candidateCheck == "" && *candidateReplay == "" {
-		instance, err := openAppInstance(`Local\MABI-DPS-JP.9a2c597b`)
+		instance, err := openAppInstance(applicationInstanceName)
 		if err == windows.ERROR_ALREADY_EXISTS {
 			pMessageBox.Call(0, uintptr(unsafe.Pointer(u16("MABI DPS JP はすでに起動しています。別の版に切り替える場合は、起動中のアプリを終了してください。"))), uintptr(unsafe.Pointer(u16("MABI DPS JP"))), 0x40)
 			return
@@ -1263,8 +1284,13 @@ func main() {
 	pShowWindow.Call(mainWindow, 1)
 	user32.NewProc("UpdateWindow").Call(mainWindow)
 	lastTick = time.Now()
+	initUpdateRuntime(*dir, *uiTest != "" || *candidateCheck != "" || *candidateReplay != "")
+	initAutoCapture(*dir, !nativeModern || *uiTest != "" || *candidateCheck != "" || *candidateReplay != "")
 	pSetTimer.Call(mainWindow, 1, 100, 0)
 	if nativeTestPath != "" {
+		if *modernUITest {
+			setGameOverlay(false)
+		}
 		speed = 4
 		loadSample()
 		session.Speed = 4

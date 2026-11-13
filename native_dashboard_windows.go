@@ -143,7 +143,7 @@ func nativeLayout(window, dc uintptr) {
 		historyLabel = "履歴 ▾"
 	}
 	nbutton(dc, rect{left + 12, 157, left + 110, 190}, historyLabel, "history-toggle", nativeHistoryOpen, 0)
-	for i, name := range []string{"分析", "検出プレイヤー", "バフ・スキル", "オーバーレイ", "結界通知"} {
+	for i, name := range []string{"分析", "バフ・スキル", "オーバーレイ", "結界通知"} {
 		x := left + 118 + int32(i*143)
 		page := name
 		if name == "バフ・スキル" {
@@ -152,9 +152,6 @@ func nativeLayout(window, dc uintptr) {
 		label := name
 		if name == "攻撃対象" && currentTargetFilter() != "" {
 			label = "攻撃対象 ●"
-		}
-		if name == "検出プレイヤー" {
-			label = "自分の設定"
 		}
 		if name == "バフ・スキル" {
 			label = "スキル"
@@ -189,7 +186,7 @@ func nativeLayout(window, dc uintptr) {
 	contentBottom := int32(650)
 	switch nativePage {
 	case "分析":
-		contentBottom = 1444 + int32(max(1, len(nativeSoloRows(b)))*44)
+		contentBottom = 1399 + int32(max(1, len(nativeSoloRows(b)))*44)
 	case "攻撃対象":
 		contentBottom = 450 + int32(len(damageTargets(baseDisplayBattle(), soloLog()))*49)
 	case "設定", "オーバーレイ", "結界通知":
@@ -199,9 +196,9 @@ func nativeLayout(window, dc uintptr) {
 	case "アダプター選択":
 		contentBottom = 280 + int32(len(captureAdapterList)*48)
 	case "検出プレイヤー":
-		contentBottom = 380 + int32(len(soloCandidates())*47)
+		contentBottom = 425 + int32(len(soloCandidates())*47)
 	case "スキル":
-		contentBottom = 531 + int32(max(1, len(nativeSoloRows(b)))*44)
+		contentBottom = 486 + int32(max(1, len(nativeSoloRows(b)))*44)
 	}
 	nativeMaxScroll = max(0, contentBottom-nativeBottom)
 	nativeScroll = min(nativeScroll, nativeMaxScroll)
@@ -305,7 +302,8 @@ func nativeLayout(window, dc uintptr) {
 			nbutton(dc, rect{x1 - 102, yy + 17, x1 - 10, yy + 52}, "場所メモ", "history-note", false, i)
 		}
 	case "検出プレイヤー":
-		nativeSoloSelectPanel(dc, x0, x1, y)
+		nbutton(dc, rect{x0 + 12, y + 5, x0 + 230, y + 39}, "詳細設定へ戻る", "settings-diagnostics", false, 0)
+		nativeSoloSelectPanel(dc, x0, x1, y+45)
 	case "スキル":
 		nativeSkillPanel(dc, b, x0, x1, y)
 		if !soloMode {
@@ -384,7 +382,7 @@ func nativeRank(dc uintptr, b *Battle, left, right, y int32) {
 	ntxt(dc, "自分のDPS / 職業＋エンティティID", rect{left, y, right, y + 30}, 0xDCC6AB, 16)
 	y += 39
 	if b == nil {
-		ntxt(dc, "自分の設定でIDを指定してください。指定済みの場合は対象ダメージの受信待ちです。", rect{left, y, right, y + 40}, 0xAC987D, 12)
+		ntxt(dc, "自動判定・ダメージ受信待ちです。誤判定時は設定 → 詳細 → 自分IDを修正で変更できます。", rect{left, y, right, y + 40}, 0xAC987D, 12)
 		return
 	}
 	for i, p := range b.Players {
@@ -485,6 +483,8 @@ func nativeModernClick(x, y int32) {
 			updateDisplay()
 		case "solo-autotoggle":
 			soloAutoEnabled = !soloAutoEnabled
+			autoCapturePrefs.AutoSelf = soloAutoEnabled
+			saveAutoCapturePrefs()
 			soloAutomaticSelection()
 			updateDisplay()
 		case "solo-auto":
@@ -518,6 +518,7 @@ func nativeModernClick(x, y int32) {
 		case "adapter-select":
 			if !captureCtl.running() {
 				send(controls[idCaptureAdapters], 0x014e, uintptr(h.Index), 0)
+				rememberCaptureAdapter(h.Index)
 				nativeAdaptersOpen = false
 				if nativePage == "アダプター選択" {
 					nativePage = "分析"
@@ -578,6 +579,7 @@ func nativeModernClick(x, y int32) {
 			updateOverlayStyle()
 		case "capture":
 			if captureCtl.running() {
+				pauseAutoCapture()
 				stopCapture()
 			} else {
 				ensureNativeCapture()
@@ -588,12 +590,17 @@ func nativeModernClick(x, y int32) {
 			}
 		case "settings":
 			openNativeSettings(settingsMeasure)
+		case "capture-auto":
+			toggleAutoCapture()
 		case "page:オーバーレイ":
 			openNativeSettings(settingsDisplay)
 		case "page:結界通知":
 			openNativeSettings(settingsNotice)
 		case "settings-diagnostics":
 			openNativeSettings(settingsAdvanced)
+		case "self-correction":
+			nativePage = "検出プレイヤー"
+			nativeScroll = 0
 		case "mini-adjust":
 			onCommand(idClick, 0)
 		case "players":
@@ -604,6 +611,13 @@ func nativeModernClick(x, y int32) {
 			soloReset()
 		case "settings-import":
 			nativeImportPreviousSettings()
+		case "update-check":
+			beginUpdateCheck()
+		case "update-install":
+			requestUpdateInstall()
+		case "update-auto":
+			updatePrefs.CheckOnStartup = !updatePrefs.CheckOnStartup
+			saveUpdatePreferences()
 		case "idle-edit":
 			openMiniSizeEditor(nil)
 		case "overlay-regular":

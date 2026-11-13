@@ -14,12 +14,6 @@ import (
 	"github.com/gopacket/gopacket/pcap"
 )
 
-type CaptureDevice struct {
-	Name      string
-	Label     string
-	Suggested bool
-}
-
 func captureDevices() ([]CaptureDevice, error) {
 	if e := pcap.LoadWinPCAP(); e != nil {
 		return nil, fmt.Errorf("NpcapのDLLを読み込めません。サンプル再生は利用できます")

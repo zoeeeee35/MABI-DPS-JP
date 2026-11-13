@@ -16,15 +16,18 @@ func nativeAdapterLabel() string {
 }
 func nativeCapturePanel(dc uintptr, left, right, y int32) {
 	s := captureCtl.snapshot()
-	nbox(dc, rect{left, y, right, y + 199}, 0x281B12)
+	nbox(dc, rect{left, y, right, y + 296}, 0x281B12)
 	ntxt(dc, "データ取得", rect{left + 18, y + 14, right - 16, y + 40}, 0xE9E3D9, 16)
-	ntxt(dc, "アダプター・開始停止は上部バーから操作できます。", rect{left + 18, y + 48, right - 16, y + 72}, 0xAF997D, 12)
+	ntxt(dc, "ゲーム接続のあるアダプターで自動開始。上部バーから手動操作もできます。", rect{left + 18, y + 48, right - 16, y + 72}, 0xAF997D, 12)
 	ntxt(dc, stageText(s.Stage)+" / "+s.Detail, rect{left + 18, y + 77, right - 18, y + 104}, 0xAACF8A, 12)
 	if captureSetupError != "" {
 		ntxt(dc, captureSetupError, rect{left + 18, y + 107, right - 18, y + 137}, 0xB5A1F5, 12)
 	}
-	nbutton(dc, rect{left + 18, y + 145, left + 290, y + 180}, fmt.Sprintf("戦闘終了の待機時間  %d秒", idle/1000), "idle-edit", false, 0)
-	ntxt(dc, "最後のダメージからの待機時間。計測時間には含めません。", rect{left + 304, y + 154, right - 16, y + 180}, 0xAF997D, 12)
+	nativeToggleButton(dc, rect{left + 18, y + 145, left + 330, y + 180}, "キャプチャの自動開始", "capture-auto", autoCapturePrefs.Enabled, 0xA95C7C)
+	ntxt(dc, autoCaptureStatus, rect{left + 18, y + 185, right - 16, y + 208}, 0xAF997D, 12)
+	nativeToggleButton(dc, rect{left + 18, y + 214, left + 330, y + 249}, "自分IDの自動推定", "solo-autotoggle", soloAutoEnabled, 0xA95C7C)
+	nbutton(dc, rect{left + 18, y + 257, left + 290, y + 288}, fmt.Sprintf("戦闘終了の待機時間  %d秒", idle/1000), "idle-edit", false, 0)
+	ntxt(dc, "最後のダメージからの待機時間。計測時間には含めません。", rect{left + 304, y + 264, right - 16, y + 290}, 0xAF997D, 12)
 }
 
 func nativeAdvancedPanel(dc uintptr, left, right, y int32) {
@@ -78,4 +81,5 @@ func nativeAdvancedPanel(dc uintptr, left, right, y int32) {
 		nbutton(dc, rect{left + 18, y + 148, left + 298, y + 186}, "この記録フォルダーを削除", "record-delete", false, 0)
 	}
 	nbutton(dc, rect{flagReviewX, y + 148, flagReviewX + 280, y + 186}, "判定フラグの検証・CSV", "flag-review", false, 0)
+	nbutton(dc, rect{left + 18, y + 192, left + 298, y + 224}, "自分IDを修正", "self-correction", false, 0)
 }

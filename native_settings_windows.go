@@ -46,6 +46,10 @@ func nativeSettingsBottom() int32 {
 			return 980
 		}
 		return 779
+	case settingsOther:
+		return 680
+	case settingsMeasure:
+		return 640
 	default:
 		return 525
 	}
@@ -80,6 +84,16 @@ func nativeSettingsPanel(dc uintptr, left, right, y int32, mode int) {
 		ntxt(dc, "設定の引き継ぎ", rect{left + 18, y + 12, right - 16, y + 40}, 0xE9E3D9, 16)
 		nbutton(dc, rect{left + 18, y + 54, left + 290, y + 90}, "旧版から設定を引き継ぐ", "settings-import", false, 0)
 		ntxt(dc, "旧版のフォルダーから表示・計測・通知の設定を取り込みます。", rect{left + 304, y + 61, right - 16, y + 88}, 0xAF997D, 12)
+		y += 132
+		nbox(dc, rect{left, y, right, y + 212}, 0x281B12)
+		ntxt(dc, "アプリの更新", rect{left + 18, y + 12, right - 16, y + 40}, 0xE9E3D9, 16)
+		nativeToggleButton(dc, rect{left + 18, y + 50, left + 330, y + 86}, "起動時に更新を確認", "update-auto", updatePrefs.CheckOnStartup, 0xA95C7C)
+		nbutton(dc, rect{left + 18, y + 98, left + 220, y + 134}, "最新版を確認", "update-check", false, 0)
+		if pendingUpdate != nil && !updateBusy {
+			nbutton(dc, rect{left + 234, y + 98, left + 438, y + 134}, "更新する v"+pendingUpdate.Version, "update-install", true, 0)
+		}
+		ntxt(dc, updateStatus, rect{left + 18, y + 145, right - 16, y + 172}, 0xE9E3D9, 13)
+		ntxt(dc, "自動確認は1日1回。適用前に確認し、設定・履歴・編集済みCSVを保持します。", rect{left + 18, y + 177, right - 16, y + 204}, 0xAF997D, 12)
 	default:
 		nativeCapturePanel(dc, left, right, y)
 	}

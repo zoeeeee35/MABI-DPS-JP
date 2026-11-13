@@ -89,7 +89,7 @@ func updateSoloMeasurement(now time.Time) {
 		if end >= run.End {
 			soloMeasurement = nil
 			soloTimerEnd = time.Time{}
-			errorText = "自分のIDを判定できなかったため、時間指定の結果は保存していません。自分の設定を確認してください。"
+			errorText = "自分のIDを判定できなかったため、時間指定の結果は保存していません。設定 → 詳細 → 自分IDを修正から確認してください。"
 		} else {
 			errorText = "計測区間を記録中：攻撃後の自分ID判定を待っています。"
 		}

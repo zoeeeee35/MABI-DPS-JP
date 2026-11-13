@@ -17,6 +17,8 @@
 *.syso
 *.zip
 node_modules/
+.updates/
+識別子翻訳.csv
 
 # Local credentials and editor state
 .env

@@ -9,7 +9,7 @@ import (
 )
 
 const overlayResourceGap = 54
-const fantasyOverlayHeight = 400 - overlayResourceGap
+const fantasyOverlayHeight = 400 - overlayResourceGap + overlaySkillTableHeight
 
 var nativeOverlayHover = -1
 var skinJPFonts = map[int32]uintptr{}
@@ -58,6 +58,15 @@ func fantasyOverlayMove(window uintptr, x, y int32) {
 	}
 	x = x * 360 / r.Right
 	y = y*fantasyOverlayHeight/r.Bottom + overlayResourceGap
+	oldSkillHover := overlaySkillHover
+	overlaySkillHover = -1
+	if y >= overlaySkillTableTop+28 && y < overlaySkillTableTop+28+23*overlaySkillVisibleRows && x >= 19 && x < 341 {
+		overlaySkillHover = int((y - overlaySkillTableTop - 28) / 23)
+	}
+	if oldSkillHover != overlaySkillHover {
+		invalidate(window)
+	}
+	y = overlayControlY(y)
 	index := -1
 	if y >= 305 && y < 329 {
 		for i := 0; i < 4; i++ {
@@ -99,7 +108,7 @@ func paintFantasyOverlay(window, dc uintptr) {
 	saved, _, _ := gdi32.NewProc("SaveDC").Call(dc)
 	defer gdi32.NewProc("RestoreDC").Call(dc, saved)
 	gdi32.NewProc("SetMapMode").Call(dc, 8)
-	gdi32.NewProc("SetWindowExtEx").Call(dc, 360, fantasyOverlayHeight, 0)
+	gdi32.NewProc("SetWindowExtEx").Call(dc, 360, uintptr(fantasyOverlayHeight), 0)
 	gdi32.NewProc("SetViewportExtEx").Call(dc, uintptr(bounds.Right), uintptr(bounds.Bottom), 0)
 	fill(dc, rect{0, 0, 360, fantasyOverlayHeight}, 0x211911)
 	fantasyCard(dc, rect{3, 3, 357, fantasyOverlayHeight - 2}, 0x2E251D, 0x211911, 25)
@@ -202,6 +211,8 @@ func paintFantasyOverlay(window, dc uintptr) {
 		overlayFitText(dc, value, rect{x, 244, x + 76, 270}, color, 19, 12)
 		skinLabel(dc, label, rect{x - 2, 275, x + 77, 292}, 0xC5BCB0, 10, true)
 	}
+	paintOverlaySkillBars(dc, current)
+	gdi32.NewProc("SetWindowOrgEx").Call(dc, 0, signed(overlayResourceGap-overlaySkillTableHeight), 0)
 	for i, label := range []string{"現在戦闘", "記録全体", "スキル", "再判定"} {
 		x := int32(18 + i*82)
 		selected := (i == 0 && !displayCaptureTotal) || (i == 1 && displayCaptureTotal)
@@ -242,4 +253,6 @@ func paintFantasyOverlay(window, dc uintptr) {
 		footer = "開始できません：メイン画面の取得設定を確認"
 	}
 	skinLabel(dc, footer, rect{12, 382, 348, 399}, 0xA79D91, 9, true)
+	gdi32.NewProc("SetWindowOrgEx").Call(dc, 0, overlayResourceGap, 0)
+	paintOverlaySkillTooltip(dc)
 }

@@ -122,7 +122,7 @@ func soloReset() {
 		enableLiveRotation(next.Live)
 		next.Live.Party = newDetectedConfig()
 		next.Live.Party.Scope = "self"
-		soloAutoEnabled = true
+		soloAutoEnabled = autoCapturePrefs.AutoSelf
 		soloAutoSelected = false
 		soloIdentityFloor = 0
 		selectedPlayer = ""
@@ -162,6 +162,8 @@ func soloReidentify() {
 		cancelSoloMeasurement()
 	}
 	soloAutoEnabled = true
+	autoCapturePrefs.AutoSelf = true
+	saveAutoCapturePrefs()
 	soloAutoSelected = false
 	selectedPlayer = ""
 	historyIndex = -1

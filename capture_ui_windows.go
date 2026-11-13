@@ -135,6 +135,7 @@ func refreshCaptureAdapters() {
 }
 func startOrStopCapture() {
 	if captureCtl.running() {
+		pauseAutoCapture()
 		stopCapture()
 		return
 	}
@@ -143,6 +144,8 @@ func startOrStopCapture() {
 		captureSetupError = "利用するアダプターを選択してください"
 		return
 	}
+	rememberCaptureAdapter(index)
+	autoCapturePaused = false
 	region := "jp"
 	if send(controls[idCaptureRegion], 0x0147, 0, 0) == 1 {
 		region = "kr"
@@ -172,7 +175,7 @@ func startOrStopCapture() {
 		}
 		jpInput = &JPProvisionalInput{Live: live, Seen: map[string]bool{}, Roles: map[string]JPRole{}}
 	}
-	soloAutoEnabled = true
+	soloAutoEnabled = autoCapturePrefs.AutoSelf
 	soloAutoSelected = false
 	soloIdentityFloor = 0
 	captureInput = live

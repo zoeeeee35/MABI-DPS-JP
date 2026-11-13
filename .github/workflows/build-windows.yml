@@ -2,6 +2,9 @@ name: Windows EXEを作成
 
 on:
   workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
 
 permissions:
   contents: read
@@ -10,40 +13,38 @@ jobs:
   build:
     runs-on: windows-2025
     timeout-minutes: 20
-
     defaults:
       run:
         shell: pwsh
-
     steps:
       - name: ソースを取得
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-
       - name: Goを準備
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
-          go-version: '1.27.3'
+          go-version-file: go.mod
           cache: false
-
-      - name: テスト・ビルド・配布ZIP作成
+      - name: タグとバージョンを確認
         run: |
-          ./package-native.ps1 -Go go -OutRoot ./release-output
-
+          $version = (Get-Content VERSION -Raw).Trim()
+          if ($env:GITHUB_REF.StartsWith('refs/tags/') -and $env:GITHUB_REF -ne "refs/tags/v$version") {
+            throw 'Tag and VERSION do not match'
+          }
+      - name: テスト・ビルド・配布ZIP作成
+        run: ./package-native.ps1 -Go go -OutRoot ./release-output
       - name: SHA256を記録
         run: |
-          Get-ChildItem ./release-output/*.zip |
-            ForEach-Object {
-              $hash = (Get-FileHash $_.FullName -Algorithm SHA256).Hash
-              "$hash  $($_.Name)"
-            } |
-            Set-Content ./release-output/SHA256SUMS.txt -Encoding utf8
-
+          Get-ChildItem ./release-output/*.zip | ForEach-Object {
+            $hash = (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+            "$hash  $($_.Name)"
+          } | Set-Content ./release-output/SHA256SUMS.txt -Encoding utf8
       - name: 完成したZIPを保存
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: MABI-DPS-JP-Windows
+          archive: true
           path: |
             release-output/*.zip
             release-output/SHA256SUMS.txt
