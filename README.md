@@ -132,3 +132,4 @@ go build -tags "native capturedev" -o MabiDPS-JP-dev.exe .
 
 ソースとテストは `app/`、利用・開発文書は `docs/` に配置しています。
 
+
